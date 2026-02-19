@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BAZIGAR | Victory Collection</title>
+    <style>
+        :root { --p-red: #d0011b; --border: #eeeeee; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #fcfcfc; }
+        header { background: #131921; padding: 15px 5%; color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .logo span { color: #febd69; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--border); background: white; }
+        .card { padding: 30px; border: 0.5px solid var(--border); display: flex; flex-direction: column; }
+        .card img { width: 100%; height: 200px; object-fit: contain; margin-bottom: 15px; }
+        .name { font-size: 16px; font-weight: 500; margin-bottom: 10px; height: 40px; overflow: hidden; }
+        .price { color: var(--p-red); font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+        .buy-btn { background: #25D366; color: white; text-align: center; padding: 10px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        @media (max-width: 800px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header><div class="logo">BAZI<span>GAR</span></div><nav>Victory Store</nav></header>
+    <div class="container">
+        <h2 style="text-align:center; margin-bottom:30px;">Victory Products (PKR)</h2>
+        <div id="pGrid" class="grid"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Aapka Firebase Config jo aapne diya
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmen5qbKuVgG4OeViT_hcYVnEB6-oV6zc",
+            authDomain: "dragonwallet-ad6bd.firebaseapp.com",
+            projectId: "dragonwallet-ad6bd",
+            storageBucket: "dragonwallet-ad6bd.firebasestorage.app",
+            messagingSenderId: "1015976329368",
+            appId: "1:1015976329368:web:6fa5c1ac3dc843b32c10ed"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const waNum = "923284355396";
+
+        const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+        onSnapshot(q, (snapshot) => {
+            const grid = document.getElementById('pGrid');
+            grid.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const p = doc.data();
+                const msg = `Assalam-o-Alaikum! Mujhe ye product chahiye:%0A*Product:* ${p.name}%0A*Price:* Rs. ${p.price}`;
+                grid.innerHTML += `
+                    <div class="card">
+                        <img src="${p.image}">
+                        <h3 class="name">${p.name}</h3>
+                        <p class="price">Rs. ${p.price}</p>
+                        <a href="https://wa.me/${waNum}?text=${msg}" target="_blank" class="buy-btn">BUY NOW</a>
+                    </div>`;
+            });
+        });
+    </script>
+</body>
+</html>
